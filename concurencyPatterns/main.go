@@ -53,7 +53,7 @@ func fanInWithSelect(input1, input2 <-chan string) <-chan string {
 			}
 		}
 	}()
- return c
+	return c
 }
 
 // function that that returns a channel, lauches a go routine that feeds data into that channel and we call the function get the
