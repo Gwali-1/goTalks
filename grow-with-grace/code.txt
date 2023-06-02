@@ -1,0 +1,25 @@
+package main
+
+import (
+"fmt"
+"net"
+)
+
+
+func main(){
+	l,err := net.Listen("tcp",":3000")
+	if err != nil{
+	fmt.Println("error")
+	}
+	for{
+	c,err := l.Accept()
+	if err != nil{
+		fmt.Println("error")
+		panic(err)
+	}
+	fmt.Println("new connection from ", c.RemoteAddr())
+	fmt.Fprintln(c,"hello")
+	c.Write([]byte("bye"))
+	c.Close()
+	}
+}

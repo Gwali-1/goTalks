@@ -1,0 +1,31 @@
+package main
+
+import (
+	"fmt"
+	"io"
+	"log"
+	"net"
+)
+
+func main() {
+	cons := []net.Conn{}
+	l, err := net.Listen("tcp", ":3000")
+	if err != nil {
+		log.Fatal("error occured:", err)
+	}
+
+	for {
+		conn, err := l.Accept()
+		if err != nil {
+			log.Fatal("error occured:", err)
+		}
+		fmt.Println("new conection from:", conn.LocalAddr())
+		cons = append(cons, conn)
+
+		if len(cons) == 2 {
+			go io.Copy(cons[0], cons[1]) //this is a blocking call hence blocks the excution// blocks until src is depleted or error
+			go io.Copy(cons[1], cons[0])
+		}
+	}
+
+}
