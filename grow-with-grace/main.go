@@ -48,7 +48,8 @@ func chat(a, b io.ReadWriteCloser) {
 	if err := <-ec; err != nil {
 		log.Println(err)
 	}
-
+	fmt.Fprintln(a, "connection closed")
+	fmt.Fprintln(b, "connection closed")
 	a.Close()
 	b.Close()
 }

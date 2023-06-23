@@ -14,6 +14,10 @@ func main() {
 		fmt.Println(<-x)
 	}
 
+	o  := make(chan int)
+	o <- 3
+
+
 }
 
 func boring(msg string, c chan string) {
