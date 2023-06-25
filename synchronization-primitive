@@ -1,0 +1,35 @@
+It's a weird example, because it moves listener creation elsewhere, which is not always possible (e.g. consider if the goroutine would be spawning an external program instead of setting up the listener of its own).
+Go has excellent primitive for this, a channel:
+
+    // Setup a channel. We'll send one and only one messsage over it, then close it.
+    // The message will be either an error (if something went wrong)
+    // or nil, if everything is fine and we can proceed.
+    ready := make(chan error)
+
+    go func() {
+        // No matter how this goroutine exits, when it exits the channel will be closed
+        defer close(ready)
+
+        // Do whatever we must: open a socket, run a subprocess, or something else
+        lis, err := net.Listen(...)
+        if err != nil {
+            // Let it be known we've failed
+            ready <- err
+            return
+        }
+        defer lis.Close()
+
+        // Announce the "parent" goroutine we're ready, without errors
+        ready <- nil
+        ...
+    }()
+
+    // Here, we block and wait for our "child" goroutine to tell
+    // us something or at least die and close the socket.
+    // You can extend this and e.g. use `select` if you want to implement a timeout
+    err, ok := <-ready
+    if err != nil {
+        return fmt.Errorf("failed to start listener goroutine: %w", err)
+    } else if !ok {
+        return errors.New("listener goroutine died unexpectedly")
+    }

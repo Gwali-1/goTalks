@@ -20,14 +20,14 @@ func main() {
 
 	log.Printf("INITIAL COUNTER VALUE: %v", COUNTER)
 	wg.Add(1)
-	go increaseCounter(int, "worker 1")
+	go increaseCounter(int)
 	wg.Add(1)
-	go increaseCounter(int, "worker 2")
+	go increaseCounter(int)
 	wg.Wait()
 	log.Printf("FINAL COUNTER VALUE: %v", COUNTER)
 }
 
-func increaseCounter(iter int, name string) {
+func increaseCounter(iter int) {
 	defer wg.Done()
 	for i := 0; i < iter; i++ {
 		COUNTER++
